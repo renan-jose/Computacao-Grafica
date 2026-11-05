@@ -2,7 +2,12 @@ package org.example;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
-import javax.swing.JFrame;
+import org.example.key.*;
+import org.example.mouse.*;
+
+import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.MouseAdapter;
 import java.util.List;
 
 public class Principal implements GLEventListener{
@@ -13,12 +18,29 @@ public class Principal implements GLEventListener{
     private Teardrop teardrop;
     private TeardropFlower teardropFlower;
     private BSpline bSpline;
-    private Transformacoes2D transformacao;
+    private Transformacoes transformacao;
     private Triangulo trianguloV;
     private Triangulo trianguloW;
+    private Mesh mesh;
+    public enum Tarefa{
+        EXERCICIO_02_1,
+        EXERCICIO_02_2,
+        ATIVIDADE_03_1,
+        EXERCICIO_04_1,
+        EXERCICIO_04_2,
+        ATIVIDADE_04,
+        EXERCICIO_05_1,
+        ATIVIDADE_05,
+        ATIVIDADE_06_1,
+        ATIVIDADE_06_2,
+        ATIVIDADE_07_1
+    }
+    private Tarefa tarefaAtual = Tarefa.ATIVIDADE_06_2;
+    private static MouseAdapter mouseAtual = null;
+    private static KeyAdapter keyAtual = null;
 
     // construtor
-    public Principal(Figura figura, Dino dino, Teardrop teardrop, TeardropFlower teardropFlower, BSpline bSpline, Transformacoes2D transformacao, Triangulo trianguloV, Triangulo trianguloW){
+    public Principal(Figura figura, Dino dino, Teardrop teardrop, TeardropFlower teardropFlower, BSpline bSpline, Transformacoes transformacao, Triangulo trianguloV, Triangulo trianguloW, Mesh mesh){
 
         gl = null;
         this.figura = figura;
@@ -29,6 +51,45 @@ public class Principal implements GLEventListener{
         this.transformacao = transformacao;
         this.trianguloV = trianguloV;
         this.trianguloW = trianguloW;
+        this.mesh = mesh;
+
+    }
+
+    public void setTarefaAtual(Tarefa tarefa){
+
+        this.tarefaAtual = tarefa;
+
+    }
+
+    private static void trocarMouse(GLJPanel panel, MouseAdapter novoMouse){
+
+        if(mouseAtual != null){
+            panel.removeMouseListener(mouseAtual);
+            panel.removeMouseMotionListener(mouseAtual);
+        }
+
+        mouseAtual = novoMouse;
+
+        if(mouseAtual != null){
+            panel.addMouseListener(mouseAtual);
+            panel.addMouseMotionListener(mouseAtual);
+        }
+
+    }
+
+    private static void trocarKey(GLJPanel panel, KeyAdapter novoKey){
+
+        if(keyAtual != null){
+            panel.removeKeyListener(keyAtual);
+        }
+
+        keyAtual = novoKey;
+
+        if(keyAtual != null){
+            panel.addKeyListener(keyAtual);
+        }
+
+        panel.requestFocusInWindow();
 
     }
 
@@ -41,10 +102,25 @@ public class Principal implements GLEventListener{
         // glClearColor cor que limpa a tela
         gl.glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 
+    }
+
+    private void prepararProjecao2D(GLAutoDrawable drawable){
+
+        int width = drawable.getSurfaceWidth();
+        int height = drawable.getSurfaceHeight();
+
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glOrtho(0.0, 650, 0.0, 500, -1.0, 1.0);
+        gl.glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
 
+    }
+
+    private void prepararProjecao3D(){
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
+        gl.glOrtho(-150.0, 150.0, -150.0, 150.0, -300.0, 300.0);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 
     }
@@ -336,27 +412,92 @@ public class Principal implements GLEventListener{
 
     }
 
+    public void atividade07_1(GLAutoDrawable drawable){
+
+        gl = drawable.getGL().getGL2();
+
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+        gl.glLoadIdentity();
+
+        gl.glColor3f(0.0f, 0.7f, 1.0f);
+
+        List<Ponto> vertices = mesh.getVertices();
+        List<Face> faces = mesh.getFaces();
+
+        for(Face face : faces){
+            gl.glBegin(GL2.GL_LINE_LOOP);
+            List<Integer> indicesVertices = face.getIndicesVertices();
+            for(Integer indice : indicesVertices){
+                Ponto p = vertices.get(indice);
+                gl.glVertex3f(p.getX(), p.getY(), p.getZ());
+            }
+            gl.glEnd();
+        }
+
+        gl.glFlush();
+
+    }
+
     // tela a ser repintada
     @Override
     public void display(GLAutoDrawable drawable){
 
-        //exercicio02_1(drawable);
-        //exercicio02_2(drawable);
+        switch(tarefaAtual){
+            case EXERCICIO_02_1:
+                prepararProjecao2D(drawable);
+                exercicio02_1(drawable);
+                break;
 
-        //atividade03_1(drawable);
-        //exercicio04_1(drawable);
+            case EXERCICIO_02_2:
+                prepararProjecao2D(drawable);
+                exercicio02_2(drawable);
+                break;
 
-        //exercicio04_2(drawable);
+            case ATIVIDADE_03_1:
+                prepararProjecao2D(drawable);
+                atividade03_1(drawable);
+                break;
 
-        //atividade_04(drawable);
+            case EXERCICIO_04_1:
+                prepararProjecao2D(drawable);
+                exercicio04_1(drawable);
+                break;
 
-        //exercicio05_1(drawable);
+            case EXERCICIO_04_2:
+                prepararProjecao2D(drawable);
+                exercicio04_2(drawable);
+                break;
 
-        //atividade_05(drawable);
+            case ATIVIDADE_04:
+                prepararProjecao2D(drawable);
+                atividade_04(drawable);
+                break;
 
-        //atividade06_1(drawable);
+            case EXERCICIO_05_1:
+                prepararProjecao2D(drawable);
+                exercicio05_1(drawable);
+                break;
 
-        atividade06_2(drawable);
+            case ATIVIDADE_05:
+                prepararProjecao2D(drawable);
+                atividade_05(drawable);
+                break;
+
+            case ATIVIDADE_06_1:
+                prepararProjecao2D(drawable);
+                atividade06_1(drawable);
+                break;
+
+            case ATIVIDADE_06_2:
+                prepararProjecao2D(drawable);
+                atividade06_2(drawable);
+                break;
+
+            case ATIVIDADE_07_1:
+                prepararProjecao3D();
+                atividade07_1(drawable);
+                break;
+        }
 
     }
 
@@ -397,26 +538,147 @@ public class Principal implements GLEventListener{
         Teardrop teardrop = new Teardrop(50, 30, 45, 100);
         TeardropFlower teardropFlower = new TeardropFlower();
         BSpline bSpline = new BSpline();
-        Transformacoes2D transformacao = new Transformacoes2D();
+        Transformacoes transformacao = new Transformacoes();
         Triangulo trianguloV = new Triangulo();
         Triangulo trianguloW = new Triangulo();
+        Mesh mesh = new Mesh();
 
         GLJPanel panel = new GLJPanel(capabilities);
-        Principal principal = new Principal(figura, dino, teardrop, teardropFlower, bSpline, transformacao, trianguloV, trianguloW);
+        Principal principal = new Principal(figura, dino, teardrop, teardropFlower, bSpline, transformacao, trianguloV, trianguloW, mesh);
+        // barrona horizontal de cima
+        JMenuBar menuBar = new JMenuBar();
+        // dropdown
+        JMenu menuTarefas = new JMenu("Tarefas");
+        JFrame frame = new JFrame("Computação gráfica");
 
         panel.addGLEventListener(principal);
         panel.setSize(800, 800);
 
-        MyMouse mouse = new MyMouse(figura, panel, teardrop, teardropFlower, bSpline, trianguloV, trianguloW);
-        MyKey key = new MyKey(figura, panel, dino, bSpline, transformacao, trianguloV, trianguloW);
+        JMenuItem itemExercicio02_1 = new JMenuItem("Exercício 02_1");
+        itemExercicio02_1.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.EXERCICIO_02_1);
+            MouseExercicio02 mouseExercicio02 = new MouseExercicio02(figura, panel);
+            trocarMouse(panel, mouseExercicio02);
+            trocarKey(panel, null);
+            panel.repaint();
+        });
 
-        panel.addMouseListener(mouse);
-        panel.addMouseMotionListener(mouse);
+        // Exercício 02_2
+        JMenuItem itemExercicio02_2 = new JMenuItem("Exercício 02_2");
+        itemExercicio02_2.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.EXERCICIO_02_2);
+            MouseExercicio02 mouseExercicio02 = new MouseExercicio02(figura, panel);
+            trocarMouse(panel, mouseExercicio02);
+            KeyExercicio02_2 keyExercicio02_2 = new KeyExercicio02_2(figura, panel);
+            trocarKey(panel, keyExercicio02_2);
+            panel.repaint();
+        });
 
-        panel.addKeyListener(key);
+        JMenuItem itemAtividade03_1 = new JMenuItem("Atividade 03_1");
+        itemAtividade03_1.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.ATIVIDADE_03_1);
+            trocarMouse(panel, null);
+            KeyAtividade03_1 keyAtividade03_1 = new KeyAtividade03_1(dino, panel);
+            trocarKey(panel, keyAtividade03_1);
+            panel.repaint();
+        });
 
-        // Frame (JFrame) pode ser qualquer tipo de frame
-        JFrame frame = new JFrame("Computação gráfica");
+        JMenuItem itemExercicio04_1 = new JMenuItem("Exercício 04_1");
+        itemExercicio04_1.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.EXERCICIO_04_1);
+            MouseExercicio04_1 mouseExercicio04_1 = new MouseExercicio04_1(teardrop, panel);
+            trocarMouse(panel, mouseExercicio04_1);
+            trocarKey(panel, null);
+            panel.repaint();
+        });
+
+        JMenuItem itemExercicio04_2 = new JMenuItem("Exercício 04_2");
+        itemExercicio04_2.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.EXERCICIO_04_2);
+            trocarMouse(panel, null);
+            KeyAtividade03_1 keyExercicio04_2 = new KeyAtividade03_1(dino, panel);
+            trocarKey(panel, keyExercicio04_2);
+            panel.repaint();
+        });
+
+        JMenuItem itemAtividade04 = new JMenuItem("Atividade 04");
+        itemAtividade04.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.ATIVIDADE_04);
+            MouseAtividade04 mouseAtividade04 = new MouseAtividade04(teardropFlower, panel);
+            trocarMouse(panel, mouseAtividade04);
+            trocarKey(panel, null);
+            panel.repaint();
+        });
+
+        JMenuItem itemExercicio05_1 = new JMenuItem("Exercício 05_1");
+        itemExercicio05_1.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.EXERCICIO_05_1);
+            MouseExercicio05_1 mouseExercicio05_1 = new MouseExercicio05_1(bSpline, panel);
+            trocarMouse(panel, mouseExercicio05_1);
+            trocarKey(panel, null);
+            panel.repaint();
+        });
+
+        JMenuItem itemAtividade05 = new JMenuItem("Atividade 05");
+        itemAtividade05.addActionListener(e -> {
+            principal.setTarefaAtual(Tarefa.ATIVIDADE_05);
+            MouseAtividade05 mouseAtividade05 = new MouseAtividade05(bSpline, panel);
+            trocarMouse(panel, mouseAtividade05);
+            trocarKey(panel, null);
+            panel.repaint();
+        });
+
+        JMenuItem itemAtividade06_1 = new JMenuItem("Atividade 06_1");
+        itemAtividade06_1.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.ATIVIDADE_06_1);
+            MouseExercicio06_1 mouseExercicio06_1 = new MouseExercicio06_1(bSpline, panel);
+            trocarMouse(panel, mouseExercicio06_1);
+            KeyAtividade06_1 keyAtividade06_1 = new KeyAtividade06_1(bSpline, panel);
+            trocarKey(panel, keyAtividade06_1);
+            panel.repaint();
+        });
+
+        JMenuItem itemAtividade06_2 = new JMenuItem("Atividade 06_2");
+        itemAtividade06_2.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.ATIVIDADE_06_2);
+            MouseAtividade06_2 mouseAtividade06_2 = new MouseAtividade06_2(trianguloV, trianguloW, bSpline, panel);
+            trocarMouse(panel, mouseAtividade06_2);
+            KeyAtividade06_2 keyAtividade06_2 = new KeyAtividade06_2(bSpline, trianguloV, trianguloW, panel);
+            trocarKey(panel, keyAtividade06_2);
+            panel.repaint();
+        });
+
+        JMenuItem itemAtividade07_1 = new JMenuItem("Atividade 07_1");
+        itemAtividade07_1.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.ATIVIDADE_07_1);
+            trocarMouse(panel, null);
+            KeyAtividade07_1 keyAtividade07_1 = new KeyAtividade07_1(mesh, panel);
+            trocarKey(panel, keyAtividade07_1);
+            panel.repaint();
+        });
+
+        MouseAtividade06_2 mouseAtividade06_2 = new MouseAtividade06_2(trianguloV, trianguloW, bSpline, panel);
+        trocarMouse(panel, mouseAtividade06_2);
+
+        menuTarefas.add(itemExercicio02_1);
+        menuTarefas.add(itemExercicio02_2);
+        menuTarefas.addSeparator();
+        menuTarefas.add(itemAtividade03_1);
+        menuTarefas.addSeparator();
+        menuTarefas.add(itemExercicio04_1);
+        menuTarefas.add(itemExercicio04_2);
+        menuTarefas.add(itemAtividade04);
+        menuTarefas.addSeparator();
+        menuTarefas.add(itemExercicio05_1);
+        menuTarefas.add(itemAtividade05);
+        menuTarefas.addSeparator();
+        menuTarefas.add(itemAtividade06_1);
+        menuTarefas.add(itemAtividade06_2);
+        menuTarefas.addSeparator();
+        menuTarefas.add(itemAtividade07_1);
+
+        menuBar.add(menuTarefas);
+        frame.setJMenuBar(menuBar);
 
         frame.getContentPane().add(panel);
         frame.pack();

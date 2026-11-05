@@ -44,7 +44,7 @@ public class Teardrop{
            theta = thetaInicio + (i * passo);
            xArco = (float) (xCentro + raio * Math.cos(theta));
            yArco = (float) (yCentro + raio * Math.sin(theta));
-           pontoArco = new Ponto(xArco, yArco);
+           pontoArco = new Ponto(xArco, yArco, 0);
            pontos.add(pontoArco);
        }
 

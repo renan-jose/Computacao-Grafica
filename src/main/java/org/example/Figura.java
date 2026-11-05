@@ -38,15 +38,15 @@ public class Figura{
 
     }
 
-    public void removerVertice(float x, float y){
+    public void removerVertice(float x, float y, float z){
 
         int removido = -1, i = 0;
         float menorDistancia = Float.MAX_VALUE;
 
         if(pontos.isEmpty() != true){
             for(i = 0; i < pontos.size(); i++){
-                if(pontos.get(i).calcularDistancia(x, y) < menorDistancia){
-                    menorDistancia = pontos.get(i).calcularDistancia(x, y);
+                if(pontos.get(i).calcularDistancia(x, y, z) < menorDistancia){
+                    menorDistancia = pontos.get(i).calcularDistancia(x, y, z);
                     removido = i;
                 }
             }
@@ -58,15 +58,15 @@ public class Figura{
 
     }
 
-    public void selecionarMaisProximo(float x, float y){
+    public void selecionarMaisProximo(float x, float y, float z){
 
         int tonho = -1, i = 0;
         float menorDistancia = Float.MAX_VALUE;
 
         if(pontos.isEmpty() != true){
             for(i = 0; i < pontos.size(); i++){
-                if(pontos.get(i).calcularDistancia(x, y) < menorDistancia){
-                    menorDistancia = pontos.get(i).calcularDistancia(x, y);
+                if(pontos.get(i).calcularDistancia(x, y, z) < menorDistancia){
+                    menorDistancia = pontos.get(i).calcularDistancia(x, y, z);
                     tonho = i;
                 }
             }

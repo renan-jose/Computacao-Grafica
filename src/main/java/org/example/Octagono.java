@@ -19,7 +19,7 @@ public class Octagono{
 
         pontos.clear();
 
-        float passo = (float) (2 * Math.PI / 8.0), angulo, x, y;
+        float passo = (float) (2 * Math.PI / 8.0), angulo, x, y, z;
         int i;
         Ponto ponto;
 
@@ -27,7 +27,8 @@ public class Octagono{
             angulo = i * passo;
             x = (float) (pontoClique.getX() + raio * Math.cos(angulo));
             y = (float) (pontoClique.getY() + raio * Math.sin(angulo));
-            ponto = new Ponto(x, y);
+            z = 0;
+            ponto = new Ponto(x, y, z);
             pontos.add(ponto);
         }
 

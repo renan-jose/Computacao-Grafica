@@ -11,7 +11,7 @@ public class MyKey extends KeyAdapter{
     private JPanel painel;
     private float passo = 2.0f;
     private BSpline bSpline;
-    private Transformacoes2D transformacoes2D;
+    private Transformacoes transformacoes;
     private float passoTranslacao = 5;
     private float anguloRotacao = 5;
     private float Emais = 1.05f;
@@ -19,13 +19,13 @@ public class MyKey extends KeyAdapter{
     private Triangulo V;
     private Triangulo W;
 
-    public MyKey(Figura figura, JPanel painel, Dino dino, BSpline bSpline, Transformacoes2D transformacoes2D, Triangulo V, Triangulo W){
+    public MyKey(Figura figura, JPanel painel, Dino dino, BSpline bSpline, Transformacoes transformacoes, Triangulo V, Triangulo W){
 
         this.figura = figura;
         this.painel = painel;
         this.dino = dino;
         this.bSpline = bSpline;
-        this.transformacoes2D = transformacoes2D;
+        this.transformacoes = transformacoes;
         this.V = V;
         this.W = W;
 

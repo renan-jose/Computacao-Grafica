@@ -37,7 +37,8 @@ public class Dino{
                 for(j = 0; j < numeroPontos; j++){
                     float x = scanner.nextFloat();
                     float y = scanner.nextFloat();
-                    Ponto ponto = new Ponto(x, y);
+                    float z = 0;
+                    Ponto ponto = new Ponto(x, y, z);
                     poligono.adicionarPontoPoligono(ponto);
                 }
 

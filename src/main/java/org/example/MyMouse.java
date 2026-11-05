@@ -195,7 +195,7 @@ public class MyMouse extends MouseAdapter{
     public void mouseClicked(MouseEvent arg0){
 
         if(arg0.getButton() == MouseEvent.BUTTON1){
-            Ponto p = new Ponto(arg0.getX(), arg0.getComponent().getHeight() - arg0.getY());
+            Ponto p = new Ponto(arg0.getX(), arg0.getComponent().getHeight() - arg0.getY(), 0);
 
             if(V.estaCompleto() == false){
                 V.adicionarPonto(p);

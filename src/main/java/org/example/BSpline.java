@@ -100,14 +100,14 @@ public class BSpline{
         Ponto ponto;
 
         for(t = 0; t <= 1; t += passo){
-            float x = 0, y = 0;
+            float x = 0, y = 0, z = 0;
             for(i = 0; i <= n; i++){
                 float N = funcaoRecursiva(i, k, t, T);
                 x += N * pontos.get(i).getX();
                 y += N * pontos.get(i).getY();
             }
 
-            ponto = new Ponto(x, y);
+            ponto = new Ponto(x, y, z);
             pontosCurva.add(ponto);
         }
 
@@ -115,15 +115,15 @@ public class BSpline{
 
     }
 
-    public void removerVertice(float x, float y){
+    public void removerVertice(float x, float y, float z){
 
         int removido = -1, i;
         float menorDistancia = Float.MAX_VALUE;
 
         if(pontos.isEmpty() != true){
             for(i = 0; i < pontos.size(); i++){
-                if(pontos.get(i).calcularDistancia(x, y) < menorDistancia){
-                    menorDistancia = pontos.get(i).calcularDistancia(x, y);
+                if(pontos.get(i).calcularDistancia(x, y, z) < menorDistancia){
+                    menorDistancia = pontos.get(i).calcularDistancia(x, y, z);
                     removido = i;
                 }
             }
@@ -135,15 +135,15 @@ public class BSpline{
 
     }
 
-    public void selecionarMaisProximo(float x, float y){
+    public void selecionarMaisProximo(float x, float y, float z){
 
         int tonho = -1, i = 0;
         float menorDistancia = Float.MAX_VALUE;
 
         if(pontos.isEmpty() != true){
             for(i = 0; i < pontos.size(); i++){
-                if(pontos.get(i).calcularDistancia(x, y) < menorDistancia){
-                    menorDistancia = pontos.get(i).calcularDistancia(x, y);
+                if(pontos.get(i).calcularDistancia(x, y, z) < menorDistancia){
+                    menorDistancia = pontos.get(i).calcularDistancia(x, y, z);
                     tonho = i;
                 }
             }
@@ -180,13 +180,13 @@ public class BSpline{
 
             int numeroPts = scanner.nextInt();
             int i;
-            float x, y;
+            float x, y, z = 0;
             Ponto ponto;
 
             for(i = 0; i < numeroPts; i++){
                 x = scanner.nextFloat();
                 y = scanner.nextFloat();
-                ponto = new Ponto(x, y);
+                ponto = new Ponto(x, y, z);
                 pontos.add(ponto);
             }
         }catch(IOException e){
