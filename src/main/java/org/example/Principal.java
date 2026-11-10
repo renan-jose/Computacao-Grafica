@@ -2,6 +2,7 @@ package org.example;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 import org.example.key.*;
 import org.example.mouse.*;
 
@@ -22,6 +23,7 @@ public class Principal implements GLEventListener{
     private Triangulo trianguloV;
     private Triangulo trianguloW;
     private Mesh mesh;
+    private Camera camera;
     public enum Tarefa{
         EXERCICIO_02_1,
         EXERCICIO_02_2,
@@ -33,14 +35,15 @@ public class Principal implements GLEventListener{
         ATIVIDADE_05,
         ATIVIDADE_06_1,
         ATIVIDADE_06_2,
-        ATIVIDADE_07_1
+        ATIVIDADE_07_1,
+        ATIVIDADE_08_1
     }
-    private Tarefa tarefaAtual = Tarefa.ATIVIDADE_06_2;
+    private Tarefa tarefaAtual = Tarefa.ATIVIDADE_08_1;
     private static MouseAdapter mouseAtual = null;
     private static KeyAdapter keyAtual = null;
 
     // construtor
-    public Principal(Figura figura, Dino dino, Teardrop teardrop, TeardropFlower teardropFlower, BSpline bSpline, Transformacoes transformacao, Triangulo trianguloV, Triangulo trianguloW, Mesh mesh){
+    public Principal(Figura figura, Dino dino, Teardrop teardrop, TeardropFlower teardropFlower, BSpline bSpline, Transformacoes transformacao, Triangulo trianguloV, Triangulo trianguloW, Mesh mesh, Camera camera){
 
         gl = null;
         this.figura = figura;
@@ -52,6 +55,7 @@ public class Principal implements GLEventListener{
         this.trianguloV = trianguloV;
         this.trianguloW = trianguloW;
         this.mesh = mesh;
+        this.camera = camera;
 
     }
 
@@ -438,6 +442,37 @@ public class Principal implements GLEventListener{
 
     }
 
+    public void atividade08_1(GLAutoDrawable drawable){
+
+        gl = drawable.getGL().getGL2();
+        GLU glu = new GLU();
+
+        float aspecto = (float) drawable.getSurfaceWidth() / (float) drawable.getSurfaceHeight();
+        camera.setDadosCamera(45.0f, aspecto, 0.1f, 1000.0f);
+
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+
+        camera.aplicarProjecao(gl, glu);
+        camera.aplicarViewMatriz(gl, glu);
+
+        gl.glColor3f(0.0f, 0.7f, 1.0f);
+
+        List<Ponto> vertices = mesh.getVertices();
+        List<Face> faces = mesh.getFaces();
+
+        for (Face face : faces) {
+            gl.glBegin(GL2.GL_LINE_LOOP);
+            for (Integer indice : face.getIndicesVertices()) {
+                Ponto p = vertices.get(indice);
+                gl.glVertex3f(p.getX(), p.getY(), p.getZ());
+            }
+            gl.glEnd();
+        }
+
+        gl.glFlush();
+
+    }
+
     // tela a ser repintada
     @Override
     public void display(GLAutoDrawable drawable){
@@ -497,6 +532,10 @@ public class Principal implements GLEventListener{
                 prepararProjecao3D();
                 atividade07_1(drawable);
                 break;
+
+            case ATIVIDADE_08_1:
+                atividade08_1(drawable);
+                break;
         }
 
     }
@@ -542,9 +581,10 @@ public class Principal implements GLEventListener{
         Triangulo trianguloV = new Triangulo();
         Triangulo trianguloW = new Triangulo();
         Mesh mesh = new Mesh();
+        Camera camera = new Camera();
 
         GLJPanel panel = new GLJPanel(capabilities);
-        Principal principal = new Principal(figura, dino, teardrop, teardropFlower, bSpline, transformacao, trianguloV, trianguloW, mesh);
+        Principal principal = new Principal(figura, dino, teardrop, teardropFlower, bSpline, transformacao, trianguloV, trianguloW, mesh, camera);
         // barrona horizontal de cima
         JMenuBar menuBar = new JMenuBar();
         // dropdown
@@ -657,8 +697,17 @@ public class Principal implements GLEventListener{
             panel.repaint();
         });
 
-        MouseAtividade06_2 mouseAtividade06_2 = new MouseAtividade06_2(trianguloV, trianguloW, bSpline, panel);
-        trocarMouse(panel, mouseAtividade06_2);
+        JMenuItem itemAtividade08_1 = new JMenuItem("Atividade 08_1");
+        itemAtividade08_1.addActionListener(e -> {
+            principal.setTarefaAtual(Principal.Tarefa.ATIVIDADE_08_1);
+            trocarMouse(panel, null);
+            KeyAtividade08_1 keyAtividade08_1 = new KeyAtividade08_1(principal.camera, mesh, panel);
+            trocarKey(panel, keyAtividade08_1);
+            panel.repaint();
+        });
+
+        KeyAtividade08_1 keyAtividade08_1 = new KeyAtividade08_1(principal.camera, mesh, panel);
+        trocarKey(panel, keyAtividade08_1);
 
         menuTarefas.add(itemExercicio02_1);
         menuTarefas.add(itemExercicio02_2);
@@ -676,6 +725,8 @@ public class Principal implements GLEventListener{
         menuTarefas.add(itemAtividade06_2);
         menuTarefas.addSeparator();
         menuTarefas.add(itemAtividade07_1);
+        menuTarefas.addSeparator();
+        menuTarefas.add(itemAtividade08_1);
 
         menuBar.add(menuTarefas);
         frame.setJMenuBar(menuBar);
